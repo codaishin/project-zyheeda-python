@@ -1,22 +1,34 @@
 from functools import wraps
-from typing import Callable
+from typing import Callable, Type, TypeVar
 from unittest import TestCase
 
-TestFunc = Callable[[TestCase], None]
-TestDecorator = Callable[[TestFunc], TestFunc]
+TTestCase = TypeVar("TTestCase", bound="UnitTests")
 
 
-def _wrap_name_and_docstring(func: TestFunc, name: str, doc: str) -> TestFunc:
+def _wrap_name_and_docstring(
+    func: Callable[[TTestCase], None],
+    name: str,
+    doc: str,
+) -> Callable[[TTestCase], None]:
     wrapped = wraps(func)(func)
     wrapped.__doc__ = doc
     wrapped.__name__ = name
     return wrapped
 
 
+def _add_func_to_class(
+    cls: Type[TTestCase],
+    name: str,
+    func: Callable[[TTestCase], None],
+) -> None:
+    setattr(cls, name, func)
+
+
 class UnitTests(TestCase):
-    """
-    Test collection to run tests on.
-    It wraps unittests Testcase but provides a test classmethod.
+    """Test collection to run tests on.
+
+    Exctends `TestCase` with a `describe` decorator,
+    which allows adding of unnamed test methods to the class.
 
     Example:
     ```python
@@ -24,7 +36,7 @@ class UnitTests(TestCase):
         \"\"\"sum() tests\"\"\"
 
     @SumTests.describe("1 + 1 == 2")
-    def _(test: TestCase) -> None:
+    def _(test: SumTests) -> None:
         test.assertEqual(2, sum(1, 1))
     ```
     """
@@ -32,14 +44,19 @@ class UnitTests(TestCase):
     _count = 0
 
     @classmethod
-    def describe(cls, docstring: str) -> TestDecorator:
+    def describe(
+        cls: Type[TTestCase],
+        docstring: str,
+    ) -> Callable[[Callable[[TTestCase], None]], Callable[[TTestCase], None]]:
         """add test with docstring"""
 
-        def decorator(func: TestFunc) -> TestFunc:
+        def decorator(
+            func: Callable[[TTestCase], None]
+        ) -> Callable[[TTestCase], None]:
             cls._count += 1
             name = f"test_{cls._count}"
             wrapped = _wrap_name_and_docstring(func, name, docstring)
-            setattr(cls, name, wrapped)
+            _add_func_to_class(cls, name, wrapped)
             return func
 
         return decorator
