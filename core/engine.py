@@ -7,9 +7,9 @@ from config import Settings
 
 class Engine:
     def __init__(self, settings: Settings) -> None:
-        self.settings = settings
-        self.screen = pygame.display.set_mode(settings.size)
-        self.clock = pygame.time.Clock()
+        self._settings = settings
+        self._screen = pygame.display.set_mode(settings.size)
+        self._clock = pygame.time.Clock()
 
     @staticmethod
     def start() -> None:
@@ -17,9 +17,9 @@ class Engine:
         pygame.display.set_caption("Game")
 
     def update(self) -> None:
-        self.screen.fill("black")
+        self._screen.fill("black")
         pygame.display.update()
-        self.clock.tick(self.settings.fps)
+        self._clock.tick(self._settings.fps)
 
     @staticmethod
     def quit() -> None:

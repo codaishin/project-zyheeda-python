@@ -21,22 +21,17 @@ class EngineProtocol(Protocol):
 
 # pylint: disable=too-few-public-methods
 class Game:
-    """The game"""
-
     def __init__(self, engine: EngineProtocol) -> None:
-        self.engine = engine
-        self.is_running = True
+        self._engine = engine
+
+    def _handle_events(self) -> bool:
+        for event in self._engine.events:
+            if event.type == QUIT:
+                return False
+        return True
 
     def run(self) -> None:
-        """run full game loop"""
-
-        self.engine.start()
-
-        while self.is_running:
-            for event in self.engine.events:
-                if event.type == QUIT:
-                    self.is_running = False
-
-            self.engine.update()
-
-        self.engine.quit()
+        self._engine.start()
+        while self._handle_events():
+            self._engine.update()
+        self._engine.quit()
