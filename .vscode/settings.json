@@ -38,10 +38,20 @@
 	"python.linting.pylintCategorySeverity.refactor": "Error",
 	"python.linting.pylintCategorySeverity.warning": "Error",
 	"python.linting.mypyEnabled": true,
+	"python.linting.mypyArgs": [
+		"--follow-imports=silent",
+		"--ignore-missing-imports",
+		"--show-column-numbers",
+		"--strict",
+	],
 	//exclude files
 	"files.exclude": {
 		".env": true,
 		".mypy_cache": true,
 		"**/__pycache__": true,
-	}
+	},
+	//spellcheck wordlist
+	"cSpell.words": [
+		"pygame"
+	]
 }
