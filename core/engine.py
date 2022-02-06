@@ -26,6 +26,6 @@ class Engine:
         pygame.quit()
         sys.exit()
 
-    @property
-    def events(self) -> Iterable[pygame.event.Event]:
+    @staticmethod
+    def pull_events() -> Iterable[pygame.event.Event]:
         return pygame.event.get()

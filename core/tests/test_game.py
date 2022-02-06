@@ -12,8 +12,7 @@ class TestGame(UnitTests):
     class Engine(Mock):
         mock_events: list[Iterable[Event]] = []
 
-        @property
-        def events(self) -> Iterable[Event]:
+        def pull_events(self) -> Iterable[Event]:
             return self.mock_events.pop(0)
 
 

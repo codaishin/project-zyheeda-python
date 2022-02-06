@@ -14,8 +14,7 @@ class EngineProtocol(Protocol):
     def quit(self) -> None:
         ...
 
-    @property
-    def events(self) -> Iterable[Event]:
+    def pull_events(self) -> Iterable[Event]:
         ...
 
 
@@ -25,7 +24,7 @@ class Game:
         self._engine = engine
 
     def _handle_events(self) -> bool:
-        for event in self._engine.events:
+        for event in self._engine.pull_events():
             if event.type == QUIT:
                 return False
         return True
